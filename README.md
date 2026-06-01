@@ -43,4 +43,4 @@ src/
 - [x] Phase 2 — 컴포넌트 뼈대
 - [x] Phase 3 — 핵심 기능 (추가 / 완료 / 삭제)
 - [x] Phase 4 — localStorage 연동
-- [ ] Phase 5 — 필터 & 마무리
+- [x] Phase 5 — 필터 & 마무리
