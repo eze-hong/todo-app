@@ -3,10 +3,10 @@ function TodoItem({ todo, onToggle, onDelete }) {
     <li>
       <input
         type="checkbox"
-        checked={todo.done}
+        checked={todo.completed}
         onChange={() => onToggle(todo.id)}
       />
-      <span style={{ textDecoration: todo.done ? 'line-through' : 'none' }}>
+      <span style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
         {todo.text}
       </span>
       <button type="button" onClick={() => onDelete(todo.id)}>삭제</button>

@@ -6,32 +6,45 @@ import TodoFilter from './components/TodoFilter'
 import TodoList from './components/TodoList'
 
 function App() {
-  const [todos, setTodos] = useState(() => {
-    const saved = localStorage.getItem('todos')
-    return saved ? JSON.parse(saved) : []
-  })
+  const [todos, setTodos] = useState([])
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos))
-  }, [todos])
+    fetch('/api/todos')
+      .then(res => res.json())
+      .then(setTodos)
+  }, [])
 
   const filteredTodos = todos.filter(todo => {
-    if (filter === 'active') return !todo.done
-    if (filter === 'done') return todo.done
+    if (filter === 'active') return !todo.completed
+    if (filter === 'done') return todo.completed
     return true
   })
 
-  function addTodo(text) {
-    setTodos([...todos, { id: Date.now(), text, done: false }])
+  async function addTodo(text) {
+    const res = await fetch('/api/todos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    })
+    const todo = await res.json()
+    setTodos(prev => [...prev, todo])
   }
 
-  function toggleTodo(id) {
-    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t))
+  async function toggleTodo(id) {
+    const todo = todos.find(t => t.id === id)
+    const res = await fetch(`/api/todos/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ completed: !todo.completed }),
+    })
+    const updated = await res.json()
+    setTodos(prev => prev.map(t => t.id === id ? updated : t))
   }
 
-  function deleteTodo(id) {
-    setTodos(todos.filter(t => t.id !== id))
+  async function deleteTodo(id) {
+    await fetch(`/api/todos/${id}`, { method: 'DELETE' })
+    setTodos(prev => prev.filter(t => t.id !== id))
   }
 
   return (
